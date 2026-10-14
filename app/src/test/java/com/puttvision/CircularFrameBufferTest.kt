@@ -4,7 +4,10 @@ import android.graphics.Bitmap
 import com.puttvision.camera.CircularFrameBuffer
 import org.junit.Assert.*
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class CircularFrameBufferTest {
 
     private fun mockBitmap(): Bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888)
