@@ -191,7 +191,7 @@ private fun SessionPicker(sessions: List<Session>, current: Session?, onSelect: 
                 style = MaterialTheme.typography.labelLarge.copy(color = TextPrimary))
             Icon(Icons.Filled.ArrowDropDown, null, tint = TextSecondary)
         }
-        DropdownMenu(expanded, { expanded = false }, containerColor = SurfaceMid) {
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             sessions.forEach { s ->
                 DropdownMenuItem(
                     text    = { Column {
