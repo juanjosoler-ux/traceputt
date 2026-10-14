@@ -21,6 +21,7 @@ data class LiveUiState(
     /** The effective impact threshold currently in use (adaptive or manual) */
     val effectiveThreshold   : Float               = 3_500f,
     /** Device supports 120fps capture */
+    val highSpeedEnabled    : Boolean             = false,
     val supportsHighSpeed    : Boolean             = false,
     val skeletonLandmarks    : List<NormLandmark>  = emptyList()
 ) {
