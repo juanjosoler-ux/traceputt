@@ -55,7 +55,7 @@ fun MultiSessionChart(
             Text(label, style = MaterialTheme.typography.labelLarge.copy(
                 color = TextSecondary, letterSpacing = 2.sp))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Surface(RoundedCornerShape(6.dp), color.copy(0.12f)) {
+                Surface(shape = RoundedCornerShape(6.dp), color = color.copy(alpha = 0.12f)) {
                     Text("Ø ${"%.2f".format(avg)}$unit",
                         Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         style = MaterialTheme.typography.labelSmall.copy(color = color, fontWeight = FontWeight.Bold))
