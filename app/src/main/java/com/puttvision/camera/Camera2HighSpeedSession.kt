@@ -99,7 +99,7 @@ class Camera2HighSpeedSession(private val context: Context) {
         val sessionConfig = SessionConfiguration(
             SessionConfiguration.SESSION_HIGH_SPEED,
             outputConfigs,
-            { it.run() } as Executor,
+            Executor { command -> command.run() },
             object : CameraCaptureSession.StateCallback() {
                 override fun onConfigured(session: CameraCaptureSession) {
                     captureSession = session
