@@ -44,7 +44,13 @@ class AddressDetector @Inject constructor() {
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    fun analyze(pose: Pose, timestampMs: Long): AddressResult {
+    fun analyze(pose: Pose?, timestampMs: Long): AddressResult {
+        if (pose == null) {
+            consecutiveFails++
+            adaptThresholds()
+            stableStartMs = 0L
+            return AddressResult.NotVisible
+        }
         val nose      = pose.getPoseLandmark(PoseLandmark.NOSE)
         val leftWrist = pose.getPoseLandmark(PoseLandmark.LEFT_WRIST)
         val rightWrist= pose.getPoseLandmark(PoseLandmark.RIGHT_WRIST)
@@ -54,7 +60,7 @@ class AddressDetector @Inject constructor() {
 
         // ── 1. Visibility check ──────────────────────────────────────────────
         val landmarks = listOfNotNull(nose, leftWrist, rightWrist, leftHip, rightHip)
-        if (landmarks.any { it.inFrameLikelihood < minConfidence }) {
+        if (landmarks.size < 5 || landmarks.any { it.inFrameLikelihood < minConfidence }) {
             consecutiveFails++
             adaptThresholds()
             stableStartMs = 0L
