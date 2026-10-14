@@ -7,6 +7,8 @@ import com.puttvision.vision.TempoQuality
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TempoAnalyzer
@@ -120,6 +122,7 @@ class KalmanFilter1DTest {
 // AdaptiveAudioThreshold
 // ─────────────────────────────────────────────────────────────────────────────
 
+@RunWith(RobolectricTestRunner::class)
 class AdaptiveAudioThresholdTest {
 
     private lateinit var adaptive: AdaptiveAudioThreshold
