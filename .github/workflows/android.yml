@@ -1,63 +1,58 @@
-name: TracePutt Android build and APK release
+name: TracePutt Kotlin Android rebuild
 on:
   push:
-    branches: [main]
+    branches: [main, rebuild-puttvision]
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   android:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Use preinstalled Android SDK
+      - name: Install Android SDK
+        shell: bash
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
+          set -euo pipefail
           SDKMGR="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)"
           test -n "$SDKMGR"
-          "$SDKMGR" --version
-      - name: Install SDK
-        run: |
-          SDKMGR="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)"
           (yes | "$SDKMGR" --licenses >/dev/null || true)
-          "$SDKMGR" 'platforms;android-35' 'build-tools;35.0.0'
+          "$SDKMGR" 'platforms;android-34' 'build-tools;34.0.0'
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.9'
-      - name: Assemble APK
-        run: gradle --no-daemon :app:assembleDebug
-      - name: Verify signed APK
+          gradle-version: '8.2.1'
+      - name: Compile Android and run tests
+        run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
+      - name: Verify build
         shell: bash
         run: |
           set -euo pipefail
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           unzip -t "$APK" >/dev/null
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -6
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
-          sha256sum "$APK" | tee apk-sha256.txt
-          cp "$APK" TracePutt-v0.4-alpha-debug.apk
-      - name: Archive APK
-        uses: actions/upload-artifact@v4
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$APK" | head -6
+          cp "$APK" TracePutt-v1.0-PuttVision-rebuild-alpha.apk
+          sha256sum TracePutt-v1.0-PuttVision-rebuild-alpha.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
         with:
-          name: TracePutt-v0.4-alpha-APK
+          name: TracePutt-PuttVision-rebuild-apk
           path: |
-            TracePutt-v0.4-alpha-debug.apk
-            apk-sha256.txt
+            TracePutt-v1.0-PuttVision-rebuild-alpha.apk
+            SHA256SUMS.txt
           if-no-files-found: error
-      - name: Publish public prerelease
+      - name: Publish alpha release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.4.0-alpha
-          target_commitish: ${{ github.sha }}
+          tag_name: v1.0.0-alpha
+          name: TracePutt 1.0 alpha — PuttVision migration
           prerelease: true
-          generate_release_notes: false
-          name: TracePutt v0.4.0-alpha (experimental)
           files: |
-            TracePutt-v0.4-alpha-debug.apk
-            apk-sha256.txt
+            TracePutt-v1.0-PuttVision-rebuild-alpha.apk
+            SHA256SUMS.txt

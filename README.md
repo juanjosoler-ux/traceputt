@@ -1,13 +1,35 @@
-# TracePutt Lab Android v0.4.0-alpha
+# TracePutt 1.0 Alpha — PuttVision v9 migration
 
-Standalone native Android prototype. **Independent of TraceLine.** Processes short imported or camera-recorded videos locally, tracks a bright magenta marker fixed near the putter head, draws an apparent pixel-space trajectory and exports measurement samples as JSON.
+Rebuild based on the full PuttVision v9 user-provided Kotlin / Compose project, **not** the earlier TracePutt v0.4 proof-of-concept.  Original ZIP is unchanged. The Kotlin namespace remains `com.puttvision` for safe migration, but the app ID is now `com.traceputt.next` and the label is TracePutt. No changes were made to TraceLine.
 
-This is an EXPERIMENTAL tracker: no impact, face angle, physical millimetres, fitting, or putter recommendations. No network permission. Place the camera outside the golfer's line of sight and the stroke.
+## Preserved from PuttVision
 
-## Building
-GitHub Actions installs Android SDK 35 and Gradle 8.9, builds a debug APK, verifies its signature and ZIP integrity, uploads the artifact and publishes a prerelease. Requires Actions and write permissions enabled.
+- CameraX capture, audio impact detection, pose recognition and color marker detector.
+- Kotlin/Compose screens: onboarding, live, lab, statistics, history, settings.
+- Room storage, session data, CSV and PDF exporters; 120 fps Camera2 experimental path.
 
-Manual build: Gradle 8.9, JDK 17 and SDK 35; run `gradle :app:assembleDebug`. Debug builds are not intended for commercial distribution.
+## Crucial integrity changes
 
-## Limitations
-Uses `MediaMetadataRetriever` at 10 samples/sec and downscales videos. Requires a colored marker and good lighting. Output units are pixels of the video, not mm. 8-second windows are selectable. This is a technical alpha, not a validated professional instrument.
+The legacy PuttVision v9 pipeline had **unvalidated** calculations:
+
+- `tempoRatio` incorrectly labeled stroke-start-to-impact as backswing, used a timer for follow-through. The rebuilt engine deliberately reports tempo as unavailable until genuine backswing/downswing reversal detection exists.
+- Face orientation used screen-space green/orange marker angle, not calibrated face-to-target at impact. The rebuilt engine does not publish a numeric impact face angle.
+- Path used pixel OLS, with no homography or target line; it is not exposed as a fitted metric.
+- Ball optical-flow ROI/fps assumptions were not validated; launch direction is not published.
+
+Experimental algorithms and their source remain available for calibration and validation. The engine now marks these fields as missing rather than inventing precision.
+
+## Build
+
+GitHub Actions uses JDK 17, Gradle 8.2.1 (Android Gradle Plugin 8.2.2), SDK platform 34. Android debug APK has development signing only. Build/test checks must succeed before publishing an APK. The upstream PuttVision zip lacks gradle-wrapper.jar; the Actions workflow uses a managed Gradle distribution.
+
+## Test plan
+
+1. Compile and run unit tests.
+2. Test CameraX + microphone simultaneous acquisition on actual Android hardware.
+3. Print ArUco calibration markers and establish target-line + intrinsic/extrinsic camera parameters.
+4. Record synchronized videos and audio from putts with both markers visible.
+5. Benchmark impact/frame synchronization and ball launch against high-speed reference.
+6. Only then enable face, path, tempo and fitting recommendations.
+
+**Not a validated fitting device**; do not use its numerical output to make purchasing decisions yet.

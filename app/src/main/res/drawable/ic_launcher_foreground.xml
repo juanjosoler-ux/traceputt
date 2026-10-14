@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer circle accent -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M54,20 A34,34 0 1,1 53.99,20 Z"
+        android:strokeColor="#00E676"
+        android:strokeWidth="2"
+        android:fillAlpha="0" />
+
+    <!-- "P" letter -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M32,34 L32,74 L38,74 L38,58 L48,58
+            Q58,58 58,46 Q58,34 48,34 Z
+            M38,40 L48,40 Q52,40 52,46 Q52,52 48,52 L38,52 Z" />
+
+    <!-- "V" letter -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M62,34 L70,62 L78,34 L84,34 L74,74 L66,74 L56,34 Z" />
+</vector>
