@@ -3,6 +3,9 @@ on:
   push:
     branches: [main, rebuild-puttvision]
   workflow_dispatch:
+concurrency:
+  group: traceputt-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
