@@ -86,6 +86,8 @@ fun LiveScreen(
         VuMeterOverlay(
             level        = uiState.audioLevel,
             isArmed      = uiState.isAudioArmed,
+            isCalibrated = uiState.isAudioCalibrated,
+            effectiveThreshold = uiState.effectiveThreshold,
             sessionState = uiState.sessionState,
             modifier     = Modifier
                 .align(Alignment.BottomStart)
