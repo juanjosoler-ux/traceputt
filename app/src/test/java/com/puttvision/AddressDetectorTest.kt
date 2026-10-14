@@ -17,14 +17,14 @@ class AddressDetectorTest {
     @Before fun setUp() { detector = AddressDetector() }
 
     @Test fun `empty pose returns NotVisible`() {
-        val pose = com.google.mlkit.vision.pose.Pose()
+        val pose = com.google.mlkit.vision.pose.Pose(emptyList(), 0)
         val result = detector.analyze(pose, System.currentTimeMillis())
         // With no landmarks, confidence check fails → NotVisible
         assertEquals(AddressResult.NotVisible::class, result::class)
     }
 
     @Test fun `failCount increments on repeated failures`() {
-        val pose = com.google.mlkit.vision.pose.Pose()
+        val pose = com.google.mlkit.vision.pose.Pose(emptyList(), 0)
         repeat(5) { detector.analyze(pose, System.currentTimeMillis()) }
         assertTrue("FailCount should be > 0", detector.failCount > 0)
     }
@@ -32,7 +32,7 @@ class AddressDetectorTest {
     @Test fun `thresholds relax after ADAPTATION_THRESHOLD failures`() {
         val defaultConf  = detector.currentMinConf
         val defaultDrift = detector.currentMaxDrift
-        val pose = com.google.mlkit.vision.pose.Pose()
+        val pose = com.google.mlkit.vision.pose.Pose(emptyList(), 0)
         // Force 8+ failures
         repeat(10) { detector.analyze(pose, System.currentTimeMillis()) }
         // After enough failures, thresholds should be more relaxed (lower conf, higher drift)
@@ -43,7 +43,7 @@ class AddressDetectorTest {
     @Test fun `reset clears fail count and restores default thresholds`() {
         val defaultConf  = detector.currentMinConf
         val defaultDrift = detector.currentMaxDrift
-        val pose = com.google.mlkit.vision.pose.Pose()
+        val pose = com.google.mlkit.vision.pose.Pose(emptyList(), 0)
         repeat(10) { detector.analyze(pose, System.currentTimeMillis()) }
         detector.reset()
         assertEquals("FailCount should be 0 after reset", 0, detector.failCount)
