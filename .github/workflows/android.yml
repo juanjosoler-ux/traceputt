@@ -1,0 +1,57 @@
+name: TracePutt Android build and APK release
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install SDK
+        run: |
+          (yes | sdkmanager --licenses >/dev/null || true)
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Assemble APK
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Verify signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          unzip -t "$APK" >/dev/null
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -6
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          sha256sum "$APK" | tee apk-sha256.txt
+          cp "$APK" TracePutt-v0.4-alpha-debug.apk
+      - name: Archive APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TracePutt-v0.4-alpha-APK
+          path: |
+            TracePutt-v0.4-alpha-debug.apk
+            apk-sha256.txt
+          if-no-files-found: error
+      - name: Publish public prerelease
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.4.0-alpha
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          generate_release_notes: false
+          name: TracePutt v0.4.0-alpha (experimental)
+          files: |
+            TracePutt-v0.4-alpha-debug.apk
+            apk-sha256.txt
