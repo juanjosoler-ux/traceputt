@@ -2,7 +2,7 @@
 <resources>
     <!-- Base theme: Compose takes over from here; we just need a dark background
          so there's no white flash on startup. -->
-    <style name="Theme.PuttVision" parent="android:Theme.Material.NoTitleBar">
+    <style name="Theme.PuttVision" parent="@android:style/Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:statusBarColor">#FF0A0A0A</item>
         <item name="android:navigationBarColor">#FF0A0A0A</item>
