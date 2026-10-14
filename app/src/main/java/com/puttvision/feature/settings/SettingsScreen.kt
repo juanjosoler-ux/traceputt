@@ -121,7 +121,7 @@ fun SettingsScreen(
                     if (state.isAdaptiveCalibrated && state.calibratedThreshold != null) {
                         Surface(shape = RoundedCornerShape(8.dp), color = PuttGreen.copy(alpha = 0.15f)) {
                             Text(
-                                "RMS ${state.calibratedThreshold.toInt()}",
+                                "RMS ${state.calibratedThreshold!!.toInt()}",
                                 Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                     color = PuttGreen, fontWeight = FontWeight.Bold)
@@ -152,7 +152,7 @@ fun SettingsScreen(
                     shape    = RoundedCornerShape(8.dp),
                     colors   = ButtonDefaults.buttonColors(containerColor = SurfaceHigh)
                 ) {
-                    Icon(Icons.Filled.Videocam, null, tint = PuttGreen, Modifier.size(16.dp))
+                    Icon(imageVector = Icons.Filled.Videocam, contentDescription = null, tint = PuttGreen, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(6.dp))
                     Text("Vista previa", style = MaterialTheme.typography.labelSmall.copy(color = PuttGreen))
                 }
